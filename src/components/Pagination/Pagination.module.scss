@@ -1,0 +1,31 @@
+.root {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  justify-items: center;
+  align-items: center;
+  li {
+    a {
+      text-align: center;
+      width: 45px;
+      padding: 10px;
+      height: 45px;
+      border: 1px solid #fe5f1e;
+      border-radius: 30px;
+
+      cursor: pointer;
+      display: inline-block;
+      color: #fe5f1e;
+
+      &:hover {
+        background-color: #fe5f1e;
+        color: #fff;
+      }
+    }
+  }
+  :global {
+    .page-item.selected .page-link {
+      background-color: #fe5f1e;
+      color: #fff;
+    }
+  }
+}
