@@ -24,7 +24,7 @@ function Home() {
   React.useEffect(() => {
     setIsLoading(true);
     fetch(
-      `https://63c47de98067b6bef6d9df3d.mockapi.io/items?page=${currentPage}&limit=2${
+      `https://63c47de98067b6bef6d9df3d.mockapi.io/items?page=${currentPage}&limit=5${
         categoryId > 0 ? `&category=${categoryId}` : ''
       }&sortBy=${sortType.sortProperty}&order=${sortArrow ? 'desc' : 'asc'}&search=${searchValue}`,
     )
