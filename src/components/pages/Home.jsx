@@ -32,6 +32,7 @@ function Home() {
 
   const fetchPizzas = () => {
     setIsLoading(true);
+<<<<<<< HEAD
     // fetch(
     //   `https://63c47de98067b6bef6d9df3d.mockapi.io/items?page=${sort.page}&limit=3${
     //     sort.value > 0 ? `&category=${sort.value}` : ''
@@ -46,6 +47,20 @@ function Home() {
     //   });
     // console.log(sort.page);
     // console.log(sort.page.payload);
+=======
+    fetch(
+      `https://63c47de98067b6bef6d9df3d.mockapi.io/items?page=${currentPage}&limit=5${
+        categoryId > 0 ? `&category=${categoryId}` : ''
+      }&sortBy=${sortType.sortProperty}&order=${sortArrow ? 'desc' : 'asc'}&search=${searchValue}`,
+    )
+      .then((res) => {
+        return res.json();
+      })
+      .then((arr) => {
+        setItems(arr);
+        setIsLoading(false);
+      });
+>>>>>>> c98931b7767fe96f62b706ababc374f341d037a7
     // При первом открытии страницы экран будет автоматический
     // сколицца вверх
 
