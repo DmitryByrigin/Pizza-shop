@@ -1,8 +1,10 @@
 import { configureStore } from '@reduxjs/toolkit';
-import counterReducer from './slices/filterSlice';
+// import categoriesReducer from './slices/filterCategories';
+import sortReducer from './slices/filterSort';
 
 export const store = configureStore({
   reducer: {
-    counter: counterReducer,
+    // categoria: categoriesReducer,
+    sort: sortReducer,
   },
 });

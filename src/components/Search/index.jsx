@@ -1,14 +1,33 @@
 import React from 'react';
 import styles from './Search.module.sass';
 import { AppContext } from '../../App';
+import debounce from 'lodash.debounce';
 
 function Search() {
+  const [value, setValue] = React.useState('');
   const { searchValue, setSearchValue } = React.useContext(AppContext);
 
-  const onCangeSearchInput = (event) => {
-    setSearchValue(event.target.value);
-    console.log(searchValue);
+  const inputRef = React.useRef();
+
+  const onClickClear = () => {
+    setSearchValue('');
+    setValue('');
+    inputRef.current.focus();
   };
+
+  const updateSearchValue = React.useCallback(
+    debounce((str) => {
+      setSearchValue(str);
+    }, 150),
+    [],
+  );
+
+  const onCangeSearchInput = (event) => {
+    setValue(event.target.value);
+    console.log(searchValue);
+    updateSearchValue(event.target.value);
+  };
+
   return (
     <div className={styles.search_block}>
       <div className={styles.search}>
@@ -26,6 +45,7 @@ function Search() {
           <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
         </svg>
         <input
+          ref={inputRef}
           onChange={onCangeSearchInput}
           value={searchValue}
           placeholder="Search..."
@@ -36,7 +56,7 @@ function Search() {
             src={require('../../img/btn_deleat.png')}
             style={{ cursor: 'pointer' }}
             height="35px"
-            onClick={() => setSearchValue('')}
+            onClick={onClickClear}
           />
         ) : null}
       </div>
