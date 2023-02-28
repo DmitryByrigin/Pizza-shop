@@ -2,11 +2,10 @@ import './scss/app.scss';
 import Header from './components/Header';
 
 import React from 'react';
-import { Routes, Route, Link } from 'react-router-dom';
+import { Routes, Route, Link, useNavigate } from 'react-router-dom';
 import pizzas from './pizzas.json';
 import Card from './components/pages/Cart';
 import NotFoundBlock from './components/NotFoundBlock';
-
 import Home from './components/pages/Home';
 import NotFound from './components/pages/NotFound';
 
@@ -17,8 +16,17 @@ export const AppContext = React.createContext({});
 
 function App() {
   const [searchValue, setSearchValue] = React.useState('');
+<<<<<<< HEAD
+  const navigate = useNavigate();
+
+  const handleClick = () => {
+    navigate('/card');
+  };
+
+=======
   const count = useSelector((state) => state.counter.value);
   const dispatch = useDispatch();
+>>>>>>> c98931b7767fe96f62b706ababc374f341d037a7
   return (
     <AppContext.Provider value={{ searchValue, setSearchValue }}>
       {/* <div>
