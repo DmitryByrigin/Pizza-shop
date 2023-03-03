@@ -9,24 +9,17 @@ import NotFoundBlock from './components/NotFoundBlock';
 import Home from './components/pages/Home';
 import NotFound from './components/pages/NotFound';
 
-import { useSelector, useDispatch } from 'react-redux';
-import { decrement, increment, incrementByAmount } from './redux/slices/filterSlice';
 
 export const AppContext = React.createContext({});
 
 function App() {
   const [searchValue, setSearchValue] = React.useState('');
-<<<<<<< HEAD
   const navigate = useNavigate();
 
   const handleClick = () => {
     navigate('/card');
   };
 
-=======
-  const count = useSelector((state) => state.counter.value);
-  const dispatch = useDispatch();
->>>>>>> c98931b7767fe96f62b706ababc374f341d037a7
   return (
     <AppContext.Provider value={{ searchValue, setSearchValue }}>
       {/* <div>
