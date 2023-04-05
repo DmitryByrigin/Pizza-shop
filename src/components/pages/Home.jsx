@@ -4,111 +4,105 @@ import Categories from '../categories';
 import Sort, { list } from '../sort';
 import Sceleton from '../PizzaBlock/Sceleton';
 import { Pagination } from '../Pagination';
-import { AppContext } from '../../App';
+// import { AppContext } from '../../App';
 import { useSelector, useDispatch } from 'react-redux';
-import axios from 'axios';
+// import axios from 'axios';
 import qs from 'qs';
-import { useNavigate, useSearchParams } from 'react-router-dom';
-import { setFilters } from '../../redux/slices/filterSort';
-// import { changePage } from '../../redux/slices/filterSort';
+import { Link, useNavigate } from 'react-router-dom';
+import { selectFilter, setCurrentPage, setFilters } from '../../redux/filter/slice';
+
+import { setItems, fetchPizzas, selectPizzaData } from '../../redux/slices/pizzaSlice';
 
 function Home() {
-  // const history = useHistory();
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { searchValue } = React.useContext(AppContext);
-  const [items, setItems] = React.useState([]);
+  // const { searchValue } = React.useContext(AppContext);
+  const { items, status } = useSelector(selectPizzaData);
+  // console.log(items);
+  // const [items, setItems] = React.useState([]);
+  // const [isLoading, setIsLoading] = React.useState(true);
+  const { categoryId, sort, currentPage, searchValue } = useSelector(selectFilter);
+  // console.log(sort);
   const isMounted = React.useRef(false);
-  const isSearch = React.useRef(false);
-  const [isloading, setIsLoading] = React.useState(true);
-  // const categoria = useSelector((state) => state.categoria.value);
-  const sort = useSelector((state) => state.sort);
-  const [sortArrow, setSortArrow] = React.useState(false);
-
-  const [sortName, setSortName] = React.useState(sort.sort.name);
-  React.useEffect(() => {
-    setSortName(sort.sort.name);
-  }, [sort.sort.name]);
-
-  const fetchPizzas = () => {
-    setIsLoading(true);
-
-    // fetch(
-    //   `https://63c47de98067b6bef6d9df3d.mockapi.io/items?page=${sort.page}&limit=3${
-    //     sort.value > 0 ? `&category=${sort.value}` : ''
-    //   }&sortBy=${sort.sortProperty}&order=${sortArrow ? 'desc' : 'asc'}&search=${searchValue}`,
-    // )
-    //   .then((res) => {
-    //     return res.json();
-    //   })
-    //   .then((arr) => {
-    //     setItems(arr);
-    //     setIsLoading(false);
-    //   });
-    // console.log(sort.page);
-    // console.log(sort.page.payload);
-
-    // При первом открытии страницы экран будет автоматический
-    // сколицца вверх
-
-    axios
-      .get(
-        `https://63c47de98067b6bef6d9df3d.mockapi.io/items?page=${sort.page}&limit=3${
-          sort.categoryId > 0 ? `&category=${sort.categoryId}` : ''
-        }&sortBy=${sort.sort.sortProperty}&order=${
-          sortArrow ? 'desc' : 'asc'
-        }&search=${searchValue}`,
-      )
-      .then((res) => {
-        setItems(res.data);
-        setIsLoading(false);
-      });
-
-    window.scrollTo(0, 0);
+  const onChangePage = (page) => {
+    dispatch(setCurrentPage(page));
   };
-
-  React.useEffect(() => {
-    if (isMounted.current) {
-      const queryString = qs.stringify({
-        sortProperty: sort.sort.sortProperty,
-        name: sort.sort.name,
-        categoryId: sort.categoryId,
-        currentPage: sort.page,
-      });
-      navigate(`?${queryString}`);
-    }
-    isMounted.current = true;
-  }, [sort.categoryId, sort.sort.sortProperty, sortArrow, sort.page]);
-
+  const getPizzas = async () => {
+    // setIsLoading(true);
+    const sortBy = sort.sortProperty.replace('-', '');
+    const order = sort.order;
+    const category = categoryId > 0 ? categoryId : '';
+    const search = searchValue ? `search=${searchValue}` : '';
+    //   await axios
+    //     .get(`https://63c47de98067b6bef6d9df3d.mockapi.io/items`, {
+    //       params: {
+    //         page: currentPage,
+    //         limit: 4,
+    //         category,
+    //         sortBy,
+    //         order: order,
+    //         search,
+    //       },
+    //     })
+    //     .then((res) => {
+    //       setItems(res.data);
+    //       setIsLoading(false);
+    //       console.log('Get data');
+    //     });
+    //   console.log('create request');
+    //
+    // try {
+    // const { data } = await axios.get(`https://63c47de98067b6bef6d9df3d.mockapi.io/items`, {
+    //   params: {
+    //     page: currentPage,
+    //     limit: 4,
+    //     category,
+    //     sortBy,
+    //     order: order,
+    //     search,
+    //   },
+    // });
+    // console.log(data);
+    // setItems(res.data);
+    const changeArrow = sort.arrow;
+    dispatch(fetchPizzas({ category, sortBy, order, changeArrow, search, currentPage }));
+    // setIsLoading(false);
+    // } catch (error) {
+    //   // setIsLoading(false);
+    //   console.log(error);
+    // }
+    console.log(sort.arrow);
+  };
   React.useEffect(() => {
     if (window.location.search) {
       const params = qs.parse(window.location.search.substring(1));
-      const sortList = list.find((obj) => obj.sortProperty === params.sortProperty);
-      const sortName = list.find((obj) => obj.name === params.name);
-      // // const currentPage = Number(params.currentPage);
-      console.log(sortName);
+      const sort = list.find((obj) => obj.sortProperty === params.sortProperty);
+      const changeArrow = sort.arrow;
       dispatch(
         setFilters({
           ...params,
-          sortList,
-          sortName,
-          //currentPage: isNaN(currentPage) ? 1 : currentPage, // если currentPage не является числом, то устанавливаем значение по умолчанию 1
+          sort,
+          changeArrow,
         }),
       );
-      isSearch.current = true;
     }
   }, []);
-
   React.useEffect(() => {
-    if (!isSearch.current) {
-      fetchPizzas();
+    if (isMounted.current) {
+      const queryString = qs.stringify({
+        sortProperty: sort.sortProperty,
+        categoryId,
+        currentPage,
+      });
+
+      navigate(`?${queryString}`);
     }
-    isSearch.current = false;
-  }, [sort.categoryId, sort.sort.sortProperty, sortArrow, searchValue, sort.page]);
-
-  // const [currentPage, setCurrentPage] = React.useState(1);
-  // console.log(sort.sortProperty);
-
+    isMounted.current = true;
+  }, [categoryId, sort.sortProperty, currentPage]);
+  React.useEffect(() => {
+    getPizzas();
+  }, [categoryId, sort.sortProperty, searchValue, currentPage, sort]);
+  // categoryId, sort.sortProperty, searchValue, currentPage
   const skeletons = [...new Array(6)].map((_, index) => <Sceleton key={index} />);
   const pizzas = items
     // Поиск по готовому массиву (локального или уже загруженного)
@@ -119,26 +113,23 @@ function Home() {
     //     return false;
     //   })
     .map((obj) => (
-      <PizzaBlock
-        key={obj.id}
-        title={obj.title}
-        price={obj.price}
-        imageUrl={obj.imageUrl}
-        sizes={obj.sizes}
-        types={obj.types}
-      />
+      <Link to={`/pizza/${obj.id}`}>
+        <PizzaBlock
+          key={obj.id}
+          id={obj.id}
+          title={obj.title}
+          price={obj.price}
+          imageUrl={obj.imageUrl}
+          sizes={obj.sizes}
+          types={obj.types}
+        />
+      </Link>
     ));
-
   return (
     <>
       <div className="content__top">
         <Categories />
-        <Sort
-          // value={sortType}
-          valueArrow={sortArrow}
-          // onClickSort={(id) => setSortType(id)}
-          onClickArrow={(id) => setSortArrow(id)}
-        />
+        <Sort />
       </div>
 
       {searchValue ? (
@@ -146,15 +137,23 @@ function Home() {
       ) : (
         <h2 className="content__title">Все пиццы</h2>
       )}
-      <div className="content__items">
-        {/* <PizzaBlock title="Мексеканская" price="500" />
+
+      {/* <PizzaBlock title="Мексеканская" price="500" />
         <PizzaBlock title="Мексеканская" />
         <PizzaBlock title="Арабская" /> */}
-        {/* {console.log(sortArrow)} */}
+      {/* {console.log(sortArrow)} */}
+      {status === 'error' ? (
+        <div className="content__error-info">
+          <h2>
+            Произошла ошибка <icon>😕</icon>
+          </h2>
+          <p>К сожалению, не удалось получить питсы. Попробуйте повторить позже</p>
+        </div>
+      ) : (
+        <div className="content__items"> {status === 'loading' ? skeletons : pizzas}</div>
+      )}
 
-        {isloading ? skeletons : pizzas}
-      </div>
-      <Pagination />
+      <Pagination currentPage={currentPage} onChangePage={onChangePage} />
       {/* onChangePage={(id) => dispatch(changePage(id))} */}
     </>
   );

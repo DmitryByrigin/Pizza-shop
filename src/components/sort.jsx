@@ -1,6 +1,7 @@
 import React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { changeSort } from '../redux/slices/filterSort';
+
+import { selectSort, setOrder, setSort, setArrow } from '../redux/filter/slice';
 
 export const list = [
   { name: 'популярности', sortProperty: 'rating' },
@@ -8,26 +9,53 @@ export const list = [
   { name: 'алфавиту', sortProperty: 'title' },
 ];
 
-function Sort({ valueArrow, onClickArrow }) {
+function Sort() {
   const [open, setOpen] = React.useState(false);
-  const sort = useSelector((state) => state.sort.sort);
+  const sort = useSelector(selectSort);
   const dispatch = useDispatch();
-
-  // const [ClickSort, setClickSort] = React.useState(0);
+  const sortRef = React.useRef();
 
   const onClickListItem = (obj) => {
-    dispatch(changeSort(obj));
-    // console.log(dispatch(changeSort(obj)));
+    dispatch(setSort(obj));
     setOpen(false);
   };
 
+  React.useEffect(() => {
+    const handelClickOutside = (event) => {
+      const path = event.composedPath();
+      // console.log(path);
+      // console.log(sortRef.current);
+      if (!path.includes(sortRef.current)) {
+        setOpen(false);
+        // console.log('outside');
+      }
+    };
+
+    document.body.addEventListener('click', handelClickOutside);
+
+    return () => {
+      document.body.removeEventListener('click', handelClickOutside);
+    };
+  }, []);
+
   // console.log(sort);
+  // const onClickArrow = (value) => {
+  //     dispatch(setOrder(value === 'desc' ? 'asc' : 'desc'));
+  // }
+
+  const onChangeSort = React.useCallback(() => {
+    dispatch(setOrder(sort.order));
+    dispatch(setArrow(sort.arrow));
+    console.log(setOrder(sort.arrow));
+  }, [sort.order, sort.arrow]);
+  // let a = true;
 
   return (
-    <div className="sort">
+    <div ref={sortRef} className="sort">
       <div className="sort__label">
         <svg
-          onClick={() => onClickArrow(!valueArrow)}
+          // dispatch(setOrder(!'asc'))
+          onClick={() => onChangeSort()}
           xmlns="http://www.w3.org/2000/svg"
           width="24"
           height="24"
@@ -37,7 +65,7 @@ function Sort({ valueArrow, onClickArrow }) {
           strokeWidth="2"
           strokeLinecap="round"
           strokeLinejoin="round">
-          {valueArrow ? <path d="M18 15l-6-6-6 6" /> : <path d="M6 9l6 6 6-6" />}
+          {sort.arrow === 'arrow-down' ? <path d="M6 9l6 6 6-6" /> : <path d="M18 15l-6-6-6 6" />}
         </svg>
         <b>Сортировка по:</b>
         <span onClick={() => setOpen(!open)}>{sort.name}</span>

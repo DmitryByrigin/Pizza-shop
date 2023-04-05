@@ -1,32 +1,39 @@
 import React from 'react';
 import styles from './Search.module.sass';
-import { AppContext } from '../../App';
+// import { AppContext } from '../../App';
 import debounce from 'lodash.debounce';
+import { useDispatch, useSelector } from 'react-redux';
+import { setSearchValue } from '../../redux/filter/slice';
+import { selectFilter } from '../../redux/filter/slice';
 
 function Search() {
+  const { searchValue } = useSelector(selectFilter);
   const [value, setValue] = React.useState('');
-  const { searchValue, setSearchValue } = React.useContext(AppContext);
-
+  // const {searchValue, setSearchValue} = React.useContext(AppContext);
+  const dispatch = useDispatch();
   const inputRef = React.useRef();
+  // setSearchValue;
 
   const onClickClear = () => {
-    setSearchValue('');
+    dispatch(setSearchValue(''));
+    // setSearchValue('');
     setValue('');
     inputRef.current.focus();
   };
 
+  const onCangeSearchInput = (event) => {
+    setValue(event.target.value);
+    updateSearchValue(event.target.value);
+  };
+
   const updateSearchValue = React.useCallback(
     debounce((str) => {
-      setSearchValue(str);
+      if (str || str === '') {
+        dispatch(setSearchValue(str));
+      }
     }, 150),
     [],
   );
-
-  const onCangeSearchInput = (event) => {
-    setValue(event.target.value);
-    console.log(searchValue);
-    updateSearchValue(event.target.value);
-  };
 
   return (
     <div className={styles.search_block}>
@@ -47,7 +54,7 @@ function Search() {
         <input
           ref={inputRef}
           onChange={onCangeSearchInput}
-          value={searchValue}
+          value={value}
           placeholder="Search..."
           type="text"
         />
