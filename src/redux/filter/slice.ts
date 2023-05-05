@@ -1,4 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit';
+import { RootState } from '../store';
 
 const initialState = {
   searchValue: '',
@@ -35,6 +36,7 @@ export const filterSlice = createSlice({
 
     setArrow(state, action) {
       state.sort.arrow = state.sort.arrow === 'arrow-down' ? 'arrow-up' : 'arrow-down';
+      // state.changeArrow = state.sort.arrow;
     },
     setFilters(state, action) {
       if (Object.keys(action.payload).length) {
@@ -48,6 +50,7 @@ export const filterSlice = createSlice({
           name: 'популярности',
           sortProperty: 'rating',
           order: 'asc',
+          arrow: 'arrow-down',
         };
       }
     },
@@ -64,7 +67,7 @@ export const {
   setArrow,
 } = filterSlice.actions;
 
-export const selectSort = (state) => state.filter.sort;
-export const selectFilter = (state) => state.filter;
+export const selectSort = (state: RootState) => state.filter.sort;
+export const selectFilter = (state: RootState) => state.filter;
 
 export default filterSlice.reducer;
