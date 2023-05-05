@@ -2,8 +2,12 @@ import React from 'react';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
 
-function FullPizza() {
-  const [pizza, setPizza] = React.useState();
+const FullPizza: React.FC = () => {
+  const [pizza, setPizza] = React.useState<{
+    imageUrl: string;
+    title: string;
+    price: number;
+  }>();
   const { id } = useParams();
 
   React.useEffect(() => {
@@ -18,7 +22,7 @@ function FullPizza() {
     fetchPizza();
   }, []);
 
-  if (!pizza) return 'Загрузка...';
+  if (!pizza) return <>'Загрузка...'</>;
 
   return (
     <section className="container">
@@ -27,6 +31,6 @@ function FullPizza() {
       <h4>{pizza.price}</h4>
     </section>
   );
-}
+};
 
 export default FullPizza;
