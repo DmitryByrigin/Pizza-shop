@@ -1,33 +1,36 @@
 import React from 'react';
-import styles from './Search.module.sass';
-// import { AppContext } from '../../App';
+// import styles from './Search.module.sass';
+
 import debounce from 'lodash.debounce';
 import { useDispatch, useSelector } from 'react-redux';
-import { setSearchValue } from '../../redux/filter/slice';
-import { selectFilter } from '../../redux/filter/slice';
+import { setSearchValue, selectFilter } from '../../redux/filter/slice';
+import styles from './Search.module.scss';
 
-function Search() {
-  const { searchValue } = useSelector(selectFilter);
+type SearchProps = {
+  searchValue: string;
+  setSearchValue: (value: string) => void;
+};
+
+export const Search: React.FC<SearchProps> = ({ searchValue }) => {
+  // const { searchValue } = useSelector(selectFilter);
   const [value, setValue] = React.useState('');
-  // const {searchValue, setSearchValue} = React.useContext(AppContext);
   const dispatch = useDispatch();
-  const inputRef = React.useRef();
-  // setSearchValue;
+  const inputRef = React.useRef<HTMLInputElement>(null);
 
-  const onClickClear = () => {
+  const onClickClear = (event: React.MouseEvent<HTMLImageElement>) => {
+    console.log(event);
     dispatch(setSearchValue(''));
-    // setSearchValue('');
     setValue('');
-    inputRef.current.focus();
+    inputRef.current && inputRef.current.focus();
   };
 
-  const onCangeSearchInput = (event) => {
+  const onCangeSearchInput = (event: React.ChangeEvent<HTMLInputElement>) => {
     setValue(event.target.value);
     updateSearchValue(event.target.value);
   };
 
   const updateSearchValue = React.useCallback(
-    debounce((str) => {
+    debounce((str: string) => {
       if (str || str === '') {
         dispatch(setSearchValue(str));
       }
@@ -69,6 +72,4 @@ function Search() {
       </div>
     </div>
   );
-}
-
-export default Search;
+};

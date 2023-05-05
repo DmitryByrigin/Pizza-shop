@@ -13,7 +13,7 @@ import { selectFilter, setCurrentPage, setFilters } from '../../redux/filter/sli
 
 import { setItems, fetchPizzas, selectPizzaData } from '../../redux/slices/pizzaSlice';
 
-function Home() {
+export const Home: React.FC = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   // const { searchValue } = React.useContext(AppContext);
@@ -24,7 +24,7 @@ function Home() {
   const { categoryId, sort, currentPage, searchValue } = useSelector(selectFilter);
   // console.log(sort);
   const isMounted = React.useRef(false);
-  const onChangePage = (page) => {
+  const onChangePage = (page: number) => {
     dispatch(setCurrentPage(page));
   };
   const getPizzas = async () => {
@@ -65,24 +65,23 @@ function Home() {
     // console.log(data);
     // setItems(res.data);
     const changeArrow = sort.arrow;
+    //@ts-ignore
     dispatch(fetchPizzas({ category, sortBy, order, changeArrow, search, currentPage }));
     // setIsLoading(false);
     // } catch (error) {
     //   // setIsLoading(false);
     //   console.log(error);
     // }
-    console.log(sort.arrow);
+    // console.log(sort.arrow);
   };
   React.useEffect(() => {
     if (window.location.search) {
       const params = qs.parse(window.location.search.substring(1));
       const sort = list.find((obj) => obj.sortProperty === params.sortProperty);
-      const changeArrow = sort.arrow;
       dispatch(
         setFilters({
           ...params,
           sort,
-          changeArrow,
         }),
       );
     }
@@ -112,18 +111,18 @@ function Home() {
     //     }
     //     return false;
     //   })
-    .map((obj) => (
-      <Link to={`/pizza/${obj.id}`}>
-        <PizzaBlock
-          key={obj.id}
-          id={obj.id}
-          title={obj.title}
-          price={obj.price}
-          imageUrl={obj.imageUrl}
-          sizes={obj.sizes}
-          types={obj.types}
-        />
-      </Link>
+    .map((obj: any) => (
+      // <Link to={`/pizza/${obj.id}`}>
+      <PizzaBlock
+        key={obj.id}
+        id={obj.id}
+        title={obj.title}
+        price={obj.price}
+        imageUrl={obj.imageUrl}
+        sizes={obj.sizes}
+        types={obj.types}
+      />
+      // </Link>
     ));
   return (
     <>
@@ -145,7 +144,7 @@ function Home() {
       {status === 'error' ? (
         <div className="content__error-info">
           <h2>
-            Произошла ошибка <icon>😕</icon>
+            Произошла ошибка <span>😕</span>
           </h2>
           <p>К сожалению, не удалось получить питсы. Попробуйте повторить позже</p>
         </div>
@@ -157,6 +156,4 @@ function Home() {
       {/* onChangePage={(id) => dispatch(changePage(id))} */}
     </>
   );
-}
-
-export default Home;
+};

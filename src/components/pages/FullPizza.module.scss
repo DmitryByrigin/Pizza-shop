@@ -1,0 +1,15 @@
+.fullPizza {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  // justify-items: center;
+  align-items: top;
+}
+
+.fullPizza > h2 {
+  grid-column: 2;
+}
+
+.fullPizza > article {
+  display: grid;
+  row-gap: 5%;
+}
