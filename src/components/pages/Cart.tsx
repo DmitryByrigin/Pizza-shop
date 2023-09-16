@@ -12,6 +12,7 @@ const Cart: React.FC = () => {
   const { totalPrice, items } = useSelector(
     (state: { cart: { totalPrice: number; items: CartItemProps[] } }) => state.cart,
   );
+  const totalCount = items.reduce((sum: number, item: any) => sum + item.count, 0);
 
   //const totalPrice = items.reduce((sum, item) => sum + item.count, 0);
 
@@ -111,11 +112,9 @@ const Cart: React.FC = () => {
         <div className="cart__bottom">
           <div className="cart__bottom-details">
             <span>
-              {' '}
-              Всего пицц: <b>{totalPrice} шт.</b>{' '}
+              Всего пицц: <b>{totalCount} шт.</b>{' '}
             </span>
             <span>
-              {' '}
               Сумма заказа: <b>{totalPrice} ₽</b>{' '}
             </span>
           </div>

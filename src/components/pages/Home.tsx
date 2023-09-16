@@ -112,17 +112,17 @@ export const Home: React.FC = () => {
     //     return false;
     //   })
     .map((obj: any) => (
-      <Link to={`/pizza/${obj.id}`}>
-        <PizzaBlock
-          key={obj.id}
-          id={obj.id}
-          title={obj.title}
-          price={obj.price}
-          imageUrl={obj.imageUrl}
-          sizes={obj.sizes}
-          types={obj.types}
-        />
-      </Link>
+      // <Link to={`/pizza/${obj.id}`}>
+      <PizzaBlock
+        key={obj.id}
+        id={obj.id}
+        title={obj.title}
+        price={obj.price}
+        imageUrl={obj.imageUrl}
+        sizes={obj.sizes}
+        types={obj.types}
+      />
+      // </Link>
     ));
   return (
     <>
